@@ -319,7 +319,7 @@ public struct ThrowingPythonObject {
     @discardableResult
     public func dynamicallyCall(
         withKeywordArguments args:
-        KeyValuePairs<String, PythonConvertible> = [:]) throws -> PythonObject {
+        KeyValuePairs<String, PythonConvertible>) throws -> PythonObject {
         return try _dynamicallyCall(args)
     }
     
@@ -328,7 +328,7 @@ public struct ThrowingPythonObject {
     @discardableResult
     public func dynamicallyCall(
         withKeywordArguments args:
-        [(key: String, value: PythonConvertible)] = []) throws -> PythonObject {
+        [(key: String, value: PythonConvertible)]) throws -> PythonObject {
         return try _dynamicallyCall(args)
     }
     
@@ -625,7 +625,7 @@ public extension PythonObject {
     @discardableResult
     func dynamicallyCall(
         withKeywordArguments args:
-        KeyValuePairs<String, PythonConvertible> = [:]) -> PythonObject {
+        KeyValuePairs<String, PythonConvertible>) -> PythonObject {
         return try! throwing.dynamicallyCall(withKeywordArguments: args)
     }
     
@@ -634,7 +634,7 @@ public extension PythonObject {
     @discardableResult
     func dynamicallyCall(
         withKeywordArguments args:
-        [(key: String, value: PythonConvertible)] = []) -> PythonObject {
+        [(key: String, value: PythonConvertible)]) -> PythonObject {
         return try! throwing.dynamicallyCall(withKeywordArguments: args)
     }
 }
