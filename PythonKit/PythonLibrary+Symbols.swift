@@ -18,13 +18,12 @@
 // Required Python typealiases and constants.
 //===----------------------------------------------------------------------===//
 
-@usableFromInline
-typealias PyObjectPointer = UnsafeMutableRawPointer
-typealias PyMethodDefPointer = UnsafeMutableRawPointer
-typealias PyCCharPointer = UnsafePointer<Int8>
-typealias PyBinaryOperation =
+public typealias PyObjectPointer = UnsafeMutableRawPointer
+public typealias PyMethodDefPointer = UnsafeMutableRawPointer
+public typealias PyCCharPointer = UnsafePointer<Int8>
+public typealias PyBinaryOperation =
     @convention(c) (PyObjectPointer?, PyObjectPointer?) -> PyObjectPointer?
-typealias PyUnaryOperation =
+public typealias PyUnaryOperation =
     @convention(c) (PyObjectPointer?) -> PyObjectPointer?
 
 let Py_LT: Int32 = 0

@@ -25,8 +25,7 @@
 
 /// Typealias used when passing or returning a `PyObject` pointer with
 /// implied ownership.
-@usableFromInline
-typealias OwnedPyObjectPointer = PyObjectPointer
+public typealias OwnedPyObjectPointer = PyObjectPointer
 
 /// A primitive reference to a Python C API `PyObject`.
 ///
@@ -36,21 +35,21 @@ typealias OwnedPyObjectPointer = PyObjectPointer
 // - Note: When Swift has ownership, `PyReference` should be removed.
 //   `PythonObject` will define copy constructors, move constructors, etc. to
 //   implement move semantics.
-@usableFromInline @_fixed_layout
-final class PyReference {
+@_fixed_layout
+public final class PyReference {
     private var pointer: OwnedPyObjectPointer
     
     // This `PyReference`, once deleted, will make no delta change to the
     // python object's reference count. It will however, retain the reference for
     // the lifespan of this object.
-    init(_ pointer: OwnedPyObjectPointer) {
+    public init(_ pointer: OwnedPyObjectPointer) {
         self.pointer = pointer
         Py_IncRef(pointer)
     }
     
     // This `PyReference` adopts the +1 reference and will decrement it in the
     // future.
-    init(consuming pointer: PyObjectPointer) {
+    public init(consuming pointer: PyObjectPointer) {
         self.pointer = pointer
     }
     
@@ -58,11 +57,11 @@ final class PyReference {
         Py_DecRef(pointer)
     }
     
-    var borrowedPyObject: PyObjectPointer {
+    public var borrowedPyObject: PyObjectPointer {
         return pointer
     }
     
-    var ownedPyObject: OwnedPyObjectPointer {
+    public var ownedPyObject: OwnedPyObjectPointer {
         Py_IncRef(pointer)
         return pointer
     }
@@ -91,26 +90,25 @@ public struct PythonObject {
     /// The underlying `PyReference`.
     fileprivate var reference: PyReference
     
-    @usableFromInline
-    init(_ pointer: PyReference) {
+    public init(_ pointer: PyReference) {
         reference = pointer
     }
     
     /// Creates a new instance and a new reference.
-    init(_ pointer: OwnedPyObjectPointer) {
+    public init(_ pointer: OwnedPyObjectPointer) {
         reference = PyReference(pointer)
     }
     
     /// Creates a new instance consuming the specified `PyObject` pointer.
-    init(consuming pointer: PyObjectPointer) {
+    public init(consuming pointer: PyObjectPointer) {
         reference = PyReference(consuming: pointer)
     }
     
-    fileprivate var borrowedPyObject: PyObjectPointer {
+    public var borrowedPyObject: PyObjectPointer {
         return reference.borrowedPyObject
     }
     
-    fileprivate var ownedPyObject: OwnedPyObjectPointer {
+    public var ownedPyObject: OwnedPyObjectPointer {
         return reference.ownedPyObject
     }
 }
@@ -161,7 +159,7 @@ public extension PythonObject {
 
 /// Internal helpers to convert `PythonConvertible` values to owned and borrowed
 /// `PyObject` instances. These should not be made public.
-fileprivate extension PythonConvertible {
+public extension PythonConvertible {
     var borrowedPyObject: PyObjectPointer {
         return pythonObject.borrowedPyObject
     }
@@ -246,7 +244,7 @@ extension PythonError : CustomStringConvertible {
 
 // Reflect a Python error (which must be active) into a Swift error if one is
 // active.
-private func throwPythonErrorIfPresent() throws {
+public func throwPythonErrorIfPresent() throws {
     if PyErr_Occurred() == nil { return }
     
     var type: PyObjectPointer?
@@ -737,7 +735,7 @@ public struct PythonInterface {
 //===----------------------------------------------------------------------===//
 
 // Create a Python tuple object with the specified elements.
-private func pyTuple<T : Collection>(_ vals: T) -> OwnedPyObjectPointer
+public func pyTuple<T : Collection>(_ vals: T) -> OwnedPyObjectPointer
 where T.Element : PythonConvertible {
     let tuple = PyTuple_New(vals.count)!
     for (index, element) in vals.enumerated() {
@@ -771,7 +769,7 @@ public extension PythonObject {
 
 /// Return true if the specified objects an instance of the low-level Python
 /// type descriptor passed in as 'type'.
-private func isType(_ object: PythonObject,
+public func isType(_ object: PythonObject,
                     type: PyObjectPointer) -> Bool {
     let typePyRef = PythonObject(type)
     
@@ -825,7 +823,7 @@ extension String : PythonConvertible, ConvertibleFromPython {
     }
 }
 
-fileprivate extension PythonObject {
+public extension PythonObject {
     // Converts a `PythonObject` to the given type by applying the appropriate
     // converter function and checking the error value.
     func converted<T : Equatable>(
@@ -1178,12 +1176,12 @@ where Bound : ConvertibleFromPython {
 // Standard operators and conformances
 //===----------------------------------------------------------------------===//
 
-private typealias PythonBinaryOp =
+public typealias PythonBinaryOp =
     (OwnedPyObjectPointer?, OwnedPyObjectPointer?) -> OwnedPyObjectPointer?
-private typealias PythonUnaryOp =
+public typealias PythonUnaryOp =
     (OwnedPyObjectPointer?) -> OwnedPyObjectPointer?
 
-private func performBinaryOp(
+public func performBinaryOp(
     _ op: PythonBinaryOp, lhs: PythonObject, rhs: PythonObject) -> PythonObject {
     let result = op(lhs.borrowedPyObject, rhs.borrowedPyObject)
     // If binary operation fails (e.g. due to `TypeError`), throw an exception.
@@ -1191,7 +1189,7 @@ private func performBinaryOp(
     return PythonObject(consuming: result!)
 }
 
-private func performUnaryOp(
+public func performUnaryOp(
     _ op: PythonUnaryOp, operand: PythonObject) -> PythonObject {
     let result = op(operand.borrowedPyObject)
     // If unary operation fails (e.g. due to `TypeError`), throw an exception.
@@ -1555,7 +1553,7 @@ public struct PythonBytes : PythonConvertible, ConvertibleFromPython, Hashable {
         }
     }
 
-    private init(bytesObject: PythonObject) {
+    public init(bytesObject: PythonObject) {
         self.pythonObject = bytesObject
     }
 
