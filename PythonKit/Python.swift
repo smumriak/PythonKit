@@ -268,7 +268,7 @@ public func throwPythonErrorIfPresent() throws {
 ///   `x.throwing(arg1, arg2, ...)`. The methods will still be named
 ///   `dynamicallyCall` until further discussion/design.
 public struct ThrowingPythonObject {
-    private var base: PythonObject
+    public private(set) var base: PythonObject
     
     fileprivate init(_ base: PythonObject) {
         self.base = base
@@ -431,7 +431,7 @@ public extension PythonObject {
 @dynamicMemberLookup
 public struct CheckingPythonObject {
     /// The underlying `PythonObject`.
-    private var base: PythonObject
+    public private(set) var base: PythonObject
     
     fileprivate init(_ base: PythonObject) {
         self.base = base
